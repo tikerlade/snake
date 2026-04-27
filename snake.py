@@ -9,13 +9,13 @@ import random
 BLUE = (106, 159, 181)
 # BLUE = (106, 255, 181)
 WHITE = (255, 255, 255)
-FOOD_COLOR = (230, 60, 60)
+FOOD_COLOR = (139, 0, 255)
 
-CELL, COLS, ROWS = 20, 55, 25
+CELL, COLS, ROWS = 20, 25, 25
 HEIGHT = CELL * ROWS
 WIDTH = CELL * COLS
 
-BASE_SPEED = 5
+BASE_SPEED = 3
 BOOST_SPEED_PER_N_APPLES = 1
 
 
@@ -167,6 +167,48 @@ def title_screen(screen):
                 mouse_up = True
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
                 return GameState.GAME
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+                return GameState.QUIT
+        screen.fill(BLUE)
+
+        for button in buttons:
+            ui_action = button.update(pygame.mouse.get_pos(), mouse_up)
+            if ui_action is not None:
+                return ui_action
+            button.draw(screen)
+
+        pygame.display.flip()
+
+
+def gameover_screen(screen):
+    menu_btn = UIElement(
+        center_position=(WIDTH // 2, HEIGHT // 2 - 30),
+        font_size=30,
+        bg_rgb=BLUE,
+        text_rgb=WHITE,
+        text="menu",
+        action=GameState.TITLE,
+    )
+    tryagain_btn = UIElement(
+        center_position=(WIDTH // 2, HEIGHT // 2 + 30),
+        font_size=30,
+        bg_rgb=BLUE,
+        text_rgb=WHITE,
+        text="try again",
+        action=GameState.GAME,
+    )
+
+    buttons = [menu_btn, tryagain_btn]
+
+    while True:
+        mouse_up = False
+        for event in pygame.event.get():
+            if event.type == pygame.MOUSEBUTTONUP and event.button == 1:
+                mouse_up = True
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
+                return GameState.GAME
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+                return GameState.QUIT
         screen.fill(BLUE)
 
         for button in buttons:
@@ -281,8 +323,11 @@ def main():
     game_state = GameState.TITLE
 
     while True:
-        if game_state == GameState.TITLE or game_state == GameState.GAMEOVER:
+        if game_state == GameState.TITLE:
             game_state = title_screen(screen)
+
+        if game_state == GameState.GAMEOVER:
+            game_state = gameover_screen(screen)
 
         if game_state == GameState.GAME:
             game_state = game_screen(screen)
