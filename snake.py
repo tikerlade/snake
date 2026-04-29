@@ -9,9 +9,10 @@ import random
 BLUE = (106, 159, 181)
 # BLUE = (106, 255, 181)
 WHITE = (255, 255, 255)
-FOOD_COLOR = (139, 0, 255)
+# FOOD_COLOR = (0, 65, 194)
+FOOD_COLOR = (32, 148, 243)
 
-CELL, COLS, ROWS = 20, 25, 25
+CELL, COLS, ROWS = 20, 50, 25
 HEIGHT = CELL * ROWS
 WIDTH = CELL * COLS
 
@@ -24,6 +25,7 @@ class GameState(Enum):
     TITLE = 0
     GAME = 1
     GAMEOVER = 2
+    GAMEHARD = 3
 
 
 class Grid:
@@ -141,16 +143,24 @@ class UIElement(Sprite):
 
 
 def title_screen(screen):
-    start_btn = UIElement(
-        center_position=(WIDTH // 2, HEIGHT // 2 - 30),
+    starteasymode_btn = UIElement(
+        center_position=(WIDTH // 2, HEIGHT // 2 - 45),
         font_size=30,
         bg_rgb=BLUE,
         text_rgb=WHITE,
-        text="Start",
+        text="Start (Easy) ",
         action=GameState.GAME,
     )
+    starthardmode_btn = UIElement(
+        center_position=(WIDTH // 2, HEIGHT // 2 - 0),
+        font_size=30,
+        bg_rgb=BLUE,
+        text_rgb=WHITE,
+        text="Start (HARD) ",
+        action=GameState.GAMEHARD,
+    )
     quit_btn = UIElement(
-        center_position=(WIDTH // 2, HEIGHT // 2 + 30),
+        center_position=(WIDTH // 2, HEIGHT // 2 + 45),
         font_size=30,
         bg_rgb=BLUE,
         text_rgb=WHITE,
@@ -158,7 +168,7 @@ def title_screen(screen):
         action=GameState.QUIT,
     )
 
-    buttons = [start_btn, quit_btn]
+    buttons = [starthardmode_btn, starteasymode_btn, quit_btn]
 
     while True:
         mouse_up = False
@@ -220,7 +230,7 @@ def gameover_screen(screen):
         pygame.display.flip()
 
 
-def game_screen(screen):
+def game_screen(screen, need_blocks=False):
     font = pygame.freetype.SysFont("Courier", 18, bold=True)
     clock = pygame.time.Clock()
     # This fills the square
